@@ -1,25 +1,13 @@
 import './Home.css'
-import { useState } from 'react';
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import SignUp from '/src/components/Signup/Signup.tsx'
-import Login from '/src/components/Login/Login.tsx'
+import { useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import SignUp from '/src/components/home/Signup/Signup.tsx'
+import Login from '/src/components/home/Login/Login.tsx'
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { blue } from '@mui/material/colors';
 
 const Home = () => {
-    // Auth Listener
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
-        return uid;
-    } else {
-        // User is signed out
-        return null;
-    });
 
     const color = blue[500];
 
@@ -32,39 +20,51 @@ const Home = () => {
     const handleOpenL = () => setOpenL(true);
     const handleCloseL = () => setOpenL(false);
     
-    const logout = () => {
-        const auth = getAuth();
-        signOut(auth).then(() => {
-            // Sign-out successful.
-            alert("You are now signed out")
-          }).catch((error) => {
-            // An error happened.
-            console.log(error)
-          });
-    }    
-};
+    const [user, setUser] = useState({
+        email: '',
+        uid: ''
+    })
 
-  return (
+    useEffect(() => {
+        getCurrentUser(), [user.email]
+    })
+
+    const getCurrentUser = () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (typeof user.email === 'string')
+                setUser({
+                    email: user.email,
+                    uid: user.uid
+                })
+            }
+        })
+    }
+
+    // const logoutUser = () => {
+    //     signOut(auth).then(()=> {
+    //         alert('Signed Out')
+    //     }).catch((error)=>{
+    //         alert(`Error: ${error}`)
+    //     })
+    // }
+
+    return (
     <> 
     
     <div className="myhomediv">
         <img className="bookies-logo" src="/src/assets/images/Bookieslogo.png" alt="" />
         <div className="signupbuttons">
             <Stack direction="row" spacing={2}>
-                {checkUser() ? 
-                    <Button onClick={logout} variant="contained">Log Out
-                    </Button> 
-                    :
-                    <> 
-                    <Button onClick={handleOpen} variant="contained">Sign Up
-                    </Button>
-                    <SignUp open={open} handleClose={handleClose}/>
-                    <Button onClick={handleOpenL} variant="contained" color="success">
-                        Login
-                    </Button>
-                    <Login openL={openL} handleOpenL={handleOpenL} handleCloseL={handleCloseL}/>
-                    </>
-                }
+               <Button variant="contained">Log Out
+                </Button> 
+                <Button onClick={handleOpen} variant="contained">Sign Up
+                </Button>
+                <SignUp open={open} handleClose={handleClose}/>
+                <Button onClick={handleOpenL} variant="contained" color="success">
+                    Login
+                </Button>
+                <Login openL={openL} handleCloseL={handleCloseL}/>
             </Stack>
         </div>
     </div>

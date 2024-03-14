@@ -25,7 +25,7 @@ function SignUp({open, handleClose}:IProps) {
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          {handleClose}
+          alert('Sign up was successful')
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -74,7 +74,7 @@ function SignUp({open, handleClose}:IProps) {
             autoComplete="current-password"
             onChange={(event) => setNewuser({...newuser, password: event.target.value})}
             />
-            <Button onClick={handleSubmit} variant="contained">Sign Up</Button>
+            <Button onClick={() => {handleSubmit(); handleClose()}} variant="contained">Sign Up</Button>
         </Box>
       </Modal>
   );

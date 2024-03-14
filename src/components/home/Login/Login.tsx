@@ -3,16 +3,16 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import './Login.css';
+import { useState } from 'react';
 import { auth } from "/src/views/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 interface IProps {
     openL: boolean,
-    handleOpenL: () => boolean;
     handleCloseL: () => boolean;
 }
 
-function Login({openL, handleOpenL, handleCloseL}:IProps) {
+function Login({openL, handleCloseL}:IProps) {
   const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -26,17 +26,17 @@ function Login({openL, handleOpenL, handleCloseL}:IProps) {
   }
 
   // UserLogin
-  const [user, setUser] = useState({
+  const [logininput, setLogininput] = useState({
     email: "",
     password: ""
   })
 
 const handleSubmit = () => {
-  signInWithEmailAndPassword(auth, user.email, user.password)
+  signInWithEmailAndPassword(auth, logininput.email, logininput.password)
     .then((userCredential) => {
       // Logged in
       const user = userCredential.user;
-      {handleCloseL}
+      alert('Logged in')
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -58,7 +58,7 @@ const handleSubmit = () => {
             <TextField
             id="outlined-helperText"
             label="Email"
-            onChange={(event)=> setUser({...user, email: event.target.value})}
+            onChange={(event)=> setLogininput({...logininput, email: event.target.value})}
                 />
             <br></br>
             <TextField
@@ -66,9 +66,9 @@ const handleSubmit = () => {
             label="Password"
             type="password"
             autoComplete="current-password"
-            onChange={(event)=> setUser({...user, password: event.target.value})}
+            onChange={(event)=> setLogininput({...logininput, password: event.target.value})}
             />
-            <Button onClick={handleSubmit} variant="contained">Login</Button>
+            <Button onClick={() => {handleSubmit(); handleCloseL()}} variant="contained">Login</Button>
         </Box>
       </Modal>
   );
